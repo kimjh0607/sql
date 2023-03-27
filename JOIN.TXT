@@ -1,0 +1,49 @@
+-- 1. DEPT 테이블과 EMP 테이블에서 사번, 사원명, 부서코드, 부서명을 검색하시오. (사원명 오름차순 정렬)
+SELECT E.EMPNO, E.ENAME, E.DEPTNO, D.DNAME
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO=D.DEPTNO
+ORDER BY E.ENAME;
+
+-- 2. DEPT 테이블과 EMP 테이블에서 사번, 사원명, 급여, 부서명을 검색하시오. 단, 급여가 2000 이상인 사원에 대하여 급여기준으로 내림차순 정렬할 것.
+SELECT E.EMPNO, E.ENAME, E.SAL, D.DNAME
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO=D.DEPTNO
+WHERE (E.SAL>2000)
+ORDER BY E.SAL DESC;
+
+-- 3. DEPT 테이블과 EMP 테이블에서 사번, 사원명, 업무, 급여, 부서명을 검색하시오. 단, 업무가 MANAGER이며 급여가 2500 이상인 사원에 대해, 사번을 기준으로 오름차순 정렬할 것.
+SELECT E.EMPNO, E.ENAME, E.JOB, E.SAL, D.DNAME
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO=D.DEPTNO AND  E.JOB='MANAGER' AND E.SAL>=2500
+ORDER BY E.EMPNO;
+
+
+-- 4. EMP 테이블과 SALGRADE 테이블에서 사번, 사원명, 급여, 등급을 검색하시오. 단, 등급은 급여가  LOSAL과 HISAL 범위에 포함되고 등급이 4이며 급여를 기준으로 내림차순 정렬할 것.
+SELECT E.EMPNO, E.ENAME, E.SAL FROM EMP E
+JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL AND S.GRADE=4
+ORDER BY E.SAL DESC;
+
+-- 5. DEPT 테이블, EMP 테이블, SALGRADE 테이블에서 사번, 사원명, 부서명, 급여, 등급을 검색하시오. 단, 등급은 급여가 LOSAL과 HISAL 범위에 포함되며 등급을 기준으로 내림차순 정렬할 것.
+SELECT E.EMPNO, E.ENAME, D.DNAME, E.SAL, S.GRADE FROM EMP E
+JOIN SALGRADE S ON E.SAL BETWEEN S.LOSAL AND S.HISAL
+JOIN DEPT D ON E.DEPTNO=D.DEPTNO
+ORDER BY S.GRADE DESC;
+
+-- 6. EMP 테이블에서 사원명과 해당 사원의 관리자명을 검색하시오.
+SELECT E.ENAME, E.MGR,  B.ENAME AS MANAGER
+FROM EMP E
+JOIN EMP B ON E.MGR=B.EMPNO;
+
+
+-- 7. EMP 테이블에서 사원명과 해당 사원의 관리자명, 해당 사원의 관리자의 관리자명을 검색하시오.
+SELECT A.ENAME, A.MGR,  B.ENAME AS MANAGER, B.MGR, C.ENAME AS UPPERMANAGER
+FROM EMP A
+JOIN EMP B ON A.MGR=B.EMPNO
+JOIN EMP C ON B.MGR=C.EMPNO;
+
+
+-- 8. 7번 결과에서 상위 관리자가 없는 모든 사원의 이름도 사원명에 출력되도록 수정하시오.
+SELECT A.ENAME, A.MGR,  B.ENAME AS MANAGER, B.MGR, C.ENAME AS UPPERMANAGER
+FROM EMP A
+JOIN EMP B ON A.MGR=B.EMPNO
+LEFT JOIN EMP C ON B.MGR=C.EMPNO;
