@@ -23,4 +23,31 @@ GRANT SCHOOL TO STU;
 SELECT * FROM DBA_SYS_PRIVS WHERE GRANTEE='SCHOOL';
 
 
+CREATE TABLE DEPT_CONST
+AS SELECT * FROM DEPT WHERE 1<>1;
+
+SELECT COUNT(*) FROM EMP WHERE SAL >2500;
+
+
+CREATE TABLE EMP_CURSOR
+AS SELECT * FROM EMP;
+INSERT INTO EMP_CURSOR(EMPNO, ENAME, DEPTNO) VALUES(7701, 'TIGER', 10);
+COMMIT;
+
+CREATE TABLE EMP_LOC
+AS SELECT* FROM DEPT;
+
+CREATE TABLE EMP_SIN
+AS SELECT* FROM EMP;
+
+CREATE TABLE Accounts(
+AccountNumber VARCHAR2(20) PRIMARY KEY,
+    AccountHolder VARCHAR2(100),
+    Balance NUMBER
+);
+
+INSERT INTO Accounts (AccountNumber, AccountHolder, Balance) VALUES ('A123', 'John Doe', 5000);
+INSERT INTO Accounts (AccountNumber, AccountHolder, Balance) VALUES ('B456', 'Jane Smith', 10000);
+INSERT INTO Accounts (AccountNumber, AccountHolder, Balance) VALUES ('C789', 'Alice Johnson', 15000);
+INSERT INTO Accounts (AccountNumber, AccountHolder, Balance) VALUES ('D012', 'Bob Brown', 8000);
 

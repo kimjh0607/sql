@@ -330,13 +330,32 @@ FROM EMP A
 JOIN EMP B ON A.MGR=B.EMPNO
 LEFT JOIN EMP C ON B.MGR=C.EMPNO;
 
--- 9.문제 : 부서별 최소 급여 중에서 30번 부서의 최소급여보다는 큰 최소급여인 부서의 부서번호, 최소 급여를 출력하라
-SELECT E.DEPTNO, E.SAL
-FROM EMP E, DEPT D
-WHERE E.DEPTNO=D.DEPTNO 
-AND (SELECT MIN(SAL) FROM EMP GROUP BY DEPTNO);
+-- 9.문제 : '부서별 최소 급여' 중에서 '30번 부서의 최소급여'보다는      큰 최소급여인 부서의 부서번호, 최소 급여를 출력하라
+SELECT A.DEPTNO, A.SAL
+FROM EMP A
+GROUP BY A.DEPTNO, A.SAL;
 
--- 10.문제 : job이 CLERK 인 사원이 2명 이상 있는 부서의 부서번호, 부서명을 출력하라
+
+
+--SELECT E.DEPTNO, MIN(E.SAL)
+--FROM EMP E
+--GROUP BY E.DEPTNO
+--HAVING MIN(E.SAL)>(SELECT MIN(N.SAL)
+--FROM EMP N
+--GROUP BY N.DEPTNO
+--HAVING N.DEPTNO=30);
+
+
+
+
+--AND (SELECT MIN(SAL) FROM EMP GROUP BY DEPTNO);
+
+
+
+-- 10.문제 : 'job이 CLERK' 인 사원이 '2명 이상 있는 부서'의 부서번호, 부서명을 출력하라
+
+
+
 
 --12.문제 : job 이 'CLERK' 인 사원이 한명이라도 있는 부서의 부서명만 출력하라
 
