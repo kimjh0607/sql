@@ -146,14 +146,18 @@ JOIN EMPLOYEES B ON A.EMPLOYEE_ID=B.MANAGER_ID; --LEFT 조인할경우 WHERE로 NULL제
 -- 35. 직무를 전환한 이력이 없는 사원의 모든 정보를 조회하라.
 SELECT * 
 FROM EMPLOYEES E 
-RIGHT JOIN JOB_HISTORY J ON E.EMPLOYEE_ID = J.EMPLOYEE_ID;
---WHERE J.EMPLOYEE_ID IS NULL;
--- 36. 자신의 상사가 자신 보다 늦게 입사한 사원의 모든 정보를 조회하라.
+LEFT JOIN JOB_HISTORY J ON E.EMPLOYEE_ID = J.EMPLOYEE_ID
+WHERE J.EMPLOYEE_ID IS NULL;
+-- 36. 자신의 '상사가 자신 보다 늦게 입사'한 사원의 모든 정보를 조회하라.
+SELECT * FROM EMPLOYEES A
+LEFT JOIN EMPLOYEES B ON A.MANAGER_ID=B.EMPLOYEE_ID
+WHERE A.HIRE_DATE<B.HIRE_DATE;
 
 -- 37. 100번 사원을 직속 상사로 두고 있는 사원들의 모든 정보를 조회하라.
-
+SELECT * FROM EMPLOYEES E
+WHERE E.MANAGER_ID = 100;
 -- 38. 100번 사원을 상사로 두고 있는 모든 사원들의 모든 정보를 조회하라.
-
+SELECT;
 -- 38-1. 112번 사원의 상사들을 모두 조회해라
 
 -- 38-2. 150번 사원의 모든 상사들의 이름과 부서명을 조회하라

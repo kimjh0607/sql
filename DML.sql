@@ -169,12 +169,12 @@ INSERT INTO EMP(EMPNO) VALUES(7703);
 SELECT SYSDATE FROM DUAL;
 
 
---3명 이상 존재하는 직급
+--3명 이상 존재하는 직급----------------
 SELECT JOB,COUNT(*)
 FROM EMP
 GROUP BY JOB
 HAVING COUNT(*)>=3;
---각 입사년도별 부서별 입사자 수
+--각 입사년도별 부서별 입사자 수---------------
 SELECT TO_CHAR(HIREDATE, 'YYYY') AS HIRE_YEAR
             ,DEPTNO
             ,COUNT(*) AS CNT
