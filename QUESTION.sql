@@ -484,6 +484,27 @@ FROM EMPLOYEES;
 
 -- 78. LAST_NAME 이 Zlotkey 와 동일한 부서에 근무하는 모든 사원들의 사번 및 고용날짜를 조회한다.
 --     결과값에서 Zlotkey 는 제외한다.
+--SELECT EMPLOYEE_ID, HIRE_DATE FROM EMPLOYEES
+--WHERE LAST_NAME = Zlotkey ;
+
+--1. LAST_NAME 이 Zlotkey 와 동일한 부서에 근무하는 모든 사원들의 사번 및 고용날짜를 조회한다.
+----     결과값에서 Zlotkey 는 제외한다.
+
+SELECT EMPLOYEE_ID, HIRE_DATE FROM EMPLOYEES E
+JOIN DEPARTMENTS D ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+--WHERE DEPARTMENT_NAME =  
+
+(SELECT DEPARTMENT_NAME FROM DEPARTMENTS D
+JOIN EMPLOYEES E ON D.DEPARTMENT_ID = E.DEPARTMENT_ID
+WHERE E.LAST_NAME = 'Zlotkey')
+
+--2. -- 사원이 존재하지 않는 국가를 조회하라.
+--3. --자신의 상사가 자신 보다 늦게 입사한 사원의 모든 정보를 조회하라.
+--4. --사원수가 가장 많은 도시의 이름을 조회하라.
+--5. --담당 직무의 최대 연봉을 받고 있는 사원들의 모든 정보를 조회하라.
+--6. 사원수가 가장 많은 도시에서 근무하는 모든 사원들의 연봉 총합을 조회하라.
+
+
 
 -- 79. 회사 전체 평균 연봉보다 더 받는 사원들의 사번 및 LAST_NAME 을 조회한다.
 
@@ -608,12 +629,78 @@ FROM EMPLOYEES;
 
 --Q1 부서명, 직원명(first_name),급여,커미션 컬럼을 갖는 뷰를 작성하시요.
 --단 커미션 포인트가 없을 경우 0으로 반환
+CREATE VIEW VIEW1 AS
+SELECT DEPARTMENT_NAME, FIRST_NAME, SALARY, NVL(COMMISSION_PCT,0) AS COMM
+FROM EMPLOYEES E
+JOIN DEPARTMENTS D ON E.DEPARTMENT_ID=D.DEPARTMENT_ID;
+
 
 --Q2 부서명, 직책, 직원명, 입사일을 갖는 뷰를 작성하시오.
+CREATE VIEW VIEW2 AS
+SELECT DEPARTMENT_NAME, JOB_TITLE, FIRST_NAME, HIRE_DATE FROM DEPARTMENTS D
+JOIN EMPLOYEES E ON D.DEPARTMENT_ID=E.DEPARTMENT_ID
+JOIN JOBS J ON E.JOB_ID=J.JOB_ID;
 
---Q3 부서테이블을 복사하여 새 테이블을 만들고 그 테이블에 직원수 컬럼을 추가하고 초기값을 셋팅한 후 
---직원의 입사 및 퇴사시 직원수 컬럼을 조정하는 트리거를 작성하시오
+--Q3 부서테이블을 복사하여 새 테이블을 만들고 
+--그 테이블에 직원수 컬럼을 추가하고 초기값을 셋팅한 후 
+--직원의 '입사 및 퇴사'시 '직원수' 컬럼을 조정하는 트리거를 '작성'하시오
+--1
+CREATE TABLE DEP_TEST AS
+SELECT D.*, A.EMP_CNT FROM DEPARTMENTS D , (SELECT D1.DEPARTMENT_ID, COUNT(*) AS EMP_CNT
+                                                                                FROM EMPLOYEES E, DEPARTMENTS D1
+                                                                                WHERE E.DEPARTMENT_ID=D1.DEPARTMENT_ID
+                                                                                 GROUP BY D1.DEPARTMENT_ID)  A
+WHERE D.DEPARTMENT_ID = A.DEPARTMENT_ID;
 
+--2
+ALTER TABLE DEPARTMENTS2 ADD EMP_COUNT NUMBER;
+ALTER TABLE DEPARTMENTS2 ADD CONSTRAINT DEF1 DEFAULT 5 FOR EMP_COUNT;
+
+--3@@@@@@@@@@@@@@@@
+
+CREATE TRIGGER TRIG1
+AFTER INSERT OR DELETE ON EMPLOYEES
+FOR EACH ROW
+BEGIN
+
+        IF INSERTING THEN
+            UPDATE DEPT_TEST
+            SET EMP_CNT = EMP_CNT+1
+            WHERE DEPARTMENT_ID = :NEW.DEPARTMENT_ID;
+        ELSIF DELETING THEN
+            UPDATE DEPT_TEST
+            SET EMP_CNT = EMP_CNT-1
+            WHERE DEPARTMENT_ID = :OLD.DEPARTMENT_ID;
+        END IF;
+        
+END TRIG1;
+/
 --Q4 부서ID를 입력하면 부서명을 반환하는 함수를 작성하시오.
-
+CREATE OR REPLACE FUNCTION FN_GET_DEPT_NAME(P_DEPT_ID IN NUMBER)
+RETURN VARCHAR2
+AS
+        V_DEPT_NAME DEPARTMENTS.DEPARTMENT_NAME%TYPE;
+BEGIN
+        SELECT DEPARTMENT_NAME INTO V_DEPT_NAME
+        FROM DEPARTMENTS
+        WHERE DEPARTMENT_ID = P_DEPT_ID;
+        RETURN V_DEPT_NAME;
+END;
+SELECT FN_GET_DEPT_NAME(10) FROM DUAL;
+/
 --Q5 부서ID를 입력하면 해당 부서의 직원 목록을 출력하는 프로시저를 작성하시오.
+CREATE OR REPLACE PROCEDURE PROC_TEST(P_DEPT_ID IN NUMBER)
+IS
+BEGIN
+    FOR EMP IN (SELECT * FROM EMPLOYEES WHERE DEPARTMENT_ID = P_DEPT_ID)
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(EMP.EMPLOYEE_ID || '  ' || EMP.FIRST_NAME || '....');
+    END LOOP;
+END PROC_TEST;
+/
+
+
+
+
+
+
