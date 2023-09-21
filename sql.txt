@@ -1,0 +1,173 @@
+`````````````````````````````````````````````````````````MYSQL```````````````````````````````````````````````````````````
+120800
+---- 데이터베이스 사용
+show databases;
+create database dbname;
+drop database dbnamel;
+use dbname;
+
+------user생성
+create user 'name'@'localhost' identified by 'password'; - 현재PC에서 접속가능
+create user 'name'@'%' identified by 'password'; - 외부에서 접속가능
+drop user 'name'@'localhost'; 
+drop user 'name'@'%'; 
+select host, user from user;
+
+create user 'name'@'localhost' identified by '1234';
+select host, user from user; (mysql.user)
+
+create database mydb;
+show databases;
+
+----user권한부여
+grant all on mydb.* to 'name'@'localhost';
+show grants for 'name'@'localhost';
+revoke all on mydb.* from 'name'@'localhost';
+flush privileges; - 리셋
+
+----테이블 생성
+create database zerobase default character set utf8mb4;
+use zerobase; - (zerobase 데이터베이스를 쓰겠다.)
+
+create table tablename - 테이블만들기
+(
+columnname datatype,
+columnname datatype
+};
+
+show tables;
+
+desc tablename; - 'desc' 아직까진 테이블에만 쓰이는 것 같다
+
+drop table tablename;
+
+----테이블 변경
+alter table tablename
+rename new_tablename
+
+alter table tablename
+add column columnname datatype;
+
+alter table tablename
+modify column columnname datatype; - datatype 을 변경
+
+alter table tablename
+change column old_columnname new_columnname new_datatype; - columnname을 변경
+
+alter table tablename
+drop column columnname;
+
+----DML?
+create table person
+(
+
+);
+
+insert into tablename (col1, col2, ...)
+values (val1, val2, ...)
+
+select * from person;
+
+insert into person - 모든 컬럼값을 추가할때는 tablename 뒤 컬럼생략가능
+values (va1, va2, ...)
+
+select col1, col2, ...
+from tablename;
+
+select *  - 테이블 내의 모든 컬럼에 대한 데이터를 조회
+from tablename;
+
+where - 특정 조건에 만족하는  조회/삭제/수정
+
+select col1, col2
+from tablename
+where condition;
+
+update tablename
+set col1 = val1, col2 = val2. ...
+where condition;
+
+delete from tablename
+where condition;
+----ORDER BY
+create table celeb
+(
+    ID int not null auto_increment primary key, - 타입, 널여부, extra, 키
+    NAME varchar(32) not null default '',
+    BIRTHDAY date,
+    AGE int,
+    SEX char(1),
+    JOB_TITLE varchar(32),
+    AGENCY varchar(32)
+);
+
+select * from celeb;
+
+
+select col1, col2, ...
+from tablename
+order by co1, co2, ... asc | desc ; (default - asc, 기준에 정렬기준을 각각 줄 수도 있다.)
+
+---Comparison operators (비교연산자)
+use zerobase;
+desc celeb;
+select * from celeb;
+
+(
+A<>B 크거나 작은(같지않은)
+A!=B 같지않은
+)
+
+------Logical Operators(논리연산자) 
+-실습환경
+zerobase database
+celeb table
+
+등호는 '==' 가 아니라 '=' 사용
+and,  조건을 모두 만족하는 경우  T
+or, 하나의 조건이라도 만족하는 경우 T
+not, 조건을 만족하지 않는 경우 T
+between, 조건값이 범위 사이에 있으면 T
+in, 조건값이 목록에 있으면 T
+like 조건값이 패턴에 맞으면 T
+
+우선순위
+and>or
+
+-and
+select col1, col2, ...
+from tablename
+where condition1 and condition2 and condition3 ...; - 조건을 여러개 설정
+
+-or
+select col1, col2, ...
+from tablename
+where condition1 or orcondition2 or condition3 ...;
+
+-not
+select col1, col2, ...
+from tablename
+where not condition1 ;
+
+-between
+select col1, col2, ...
+from tablename
+where column between val1 and val2;    (= column>= val1 and column<=val2;)
+
+-in (조건값을 뽑아옴. 있다면.)
+select col1, col2, ...
+from tablename
+where column in (val1, val2, ...);    (= column=val1 or column=val2;)
+
+-like
+select col1, col2, ...
+from tablename
+where column like pattern;
+
+a% - a로 시작하는 데이터
+%a - a로 끝나는 데이터
+%a% - a가 포함된 데이터
+_a% - 두번째 글자가 a인 데이터
+a_% - a로 시작하고 최소 2글자 이상인 데이터 
+a____% - a로 시작하고 최소 5글자 이상인 데이터
+---큰흐름 1조회할 컬럼 확인, 2조건확인, 3정렬조건확인
